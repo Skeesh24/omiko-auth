@@ -1,6 +1,5 @@
 from typing import List, Union
 from fastapi import HTTPException, status
-from random import randint
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 
 from .validation import FilterModel, UserCreate, UserBase, UserResponse
