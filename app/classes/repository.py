@@ -69,8 +69,8 @@ class UserFirebase:
             new_elem = element.model_dump(exclude_defaults=True)
             query.add(document_data=new_elem)
             return new_elem
-        except Exception:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     def update(self, user: UserResponse) -> None:  
         """
@@ -102,5 +102,5 @@ class UserFirebase:
 
         try:
             self.db.recursive_delete(self.users.document(user.id))
-        except:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
