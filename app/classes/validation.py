@@ -26,7 +26,6 @@ class FilterModel(BaseModel):
         return FilterModel(field_path=path, op_string="==", value=value)
     
 
-    
 class UserCreate(BaseModel):
     email: str
     password: str
@@ -39,4 +38,3 @@ class UserBase(BaseModel):
 class UserResponse(BaseModel):
     id: str
     email: str
-    password: str
