@@ -1,8 +1,9 @@
+from typing import List, Union
 from fastapi import APIRouter, Depends
 from fastapi import status
 
 from app.classes.oauth2 import get_current_user, get_hashed
-from app.classes.validation import UserCreate
+from app.classes.validation import UserCreate, UserBase
 from app.classes.dependencies import get_users
 from app.classes.repository import UserFirebase
 from app.classes.validation import FilterModel
@@ -23,10 +24,10 @@ async def get_user_by_email(email: str, db: UserFirebase = Depends(get_users)):
     return user
 
 
-@user_router.post("", status_code=status.HTTP_201_CREATED)
+@user_router.post("", status_code=status.HTTP_201_CREATED, response_model=UserBase)
 async def registration(user: UserCreate, db: UserFirebase = Depends(get_users)):
     user.password = get_hashed(user.password)
-    db.add(user)
+    return db.add(user)
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
