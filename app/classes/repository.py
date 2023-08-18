@@ -1,9 +1,9 @@
-from typing import List, Union
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 
 from .validation import FilterModel, UserCreate, UserBase, UserResponse
 from .firebase import get_db
+from .entities import User
 
 
 class UserFirebase:
@@ -30,8 +30,8 @@ class UserFirebase:
             if where:
                 query = query.where(**where.d())
             query = query.limit(limit).offset(offset)
-        except:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
         elements = query.get()
 
@@ -72,7 +72,7 @@ class UserFirebase:
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
-    def update(self, user_id: str, element: UserBase) -> None:  
+    def update(self, user: UserResponse) -> None:  
         """
         ## Updates document by the document's id
 
@@ -83,13 +83,12 @@ class UserFirebase:
         """
 
         try:
-            self.remove(user_id)
-            self.users.add(
-                document_data=element.model_dump(exclude_defaults=True),
-                document_id=user_id,
-            )
+            self.remove(user)
+            User(**user.model_dump(exclude_defaults=True)).save()
+            return user
 
-        except Exception:
+
+        except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     def remove(self, user: UserResponse) -> None:  
