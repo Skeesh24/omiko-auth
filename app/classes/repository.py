@@ -13,7 +13,7 @@ class UserFirebase:
 
     def get(
         self, limit: int = 5, offset: int = 0, where: FilterModel = None
-    ) -> Union[List[UserResponse], UserResponse]:
+    ) -> dict:
         """
         ## Gets a document by id
 
@@ -49,7 +49,10 @@ class UserFirebase:
             return res
 
         res = [e._data for e in elements] 
-        
+
+        for i in range(len(res)):
+            res[i].update({"id":elements[i].id})
+
         return res
 
     def add(self, element: UserCreate) -> UserBase:
