@@ -35,20 +35,24 @@ class UserFirebase:
 
         elements = query.get()
 
+        if len(elements) == 0: 
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
         if limit == 1:
             res: dict = elements[0].to_dict()
             res.update({"id":elements[0].id})
             return res
-
-        res = [e._data for e in elements] \
-              if not isinstance(elements, DocumentSnapshot) \
-              else elements.to_dict()
         
-        [e.update({"id": e.id}) for e in elements]
+        if isinstance(elements, DocumentSnapshot):
+            res: dict = elements._data
+            res.update({"id":elements.id})
+            return res
 
+        res = [e._data for e in elements] 
+        
         return res
 
-    def add(self, element: UserCreate) -> None:
+    def add(self, element: UserCreate) -> UserBase:
         """
         ## Adds a document in the generic collection
 
@@ -59,7 +63,9 @@ class UserFirebase:
         query = self.users
 
         try:
-            query.add(document_data=element.model_dump(exclude_defaults=True))
+            new_elem = element.model_dump(exclude_defaults=True)
+            query.add(document_data=new_elem)
+            return new_elem
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
