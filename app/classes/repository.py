@@ -48,7 +48,7 @@ class UserFirebase:
             res.update({"id":elements.id})
             return res
 
-        res = [e._data for e in elements] 
+        res: list[dict] = [e._data for e in elements] 
 
         for i in range(len(res)):
             res[i].update({"id":elements[i].id})
@@ -57,7 +57,7 @@ class UserFirebase:
 
     def add(self, element: UserCreate) -> UserBase:
         """
-        ## Adds a document in the generic collection
+        ## Adds a document to the generic collection
 
         1. param element: the document to add
 
@@ -65,8 +65,8 @@ class UserFirebase:
         """
         query = self.users
 
-        try:
-            new_elem = element.model_dump(exclude_defaults=True)
+        try:    
+            new_elem = element.__dict__
             query.add(document_data=new_elem)
             return new_elem
         except Exception as e:

@@ -19,7 +19,7 @@ class FilterModel(BaseModel):
     value: Any
 
     def d(self) -> dict:
-        return self.model_dump(exclude_defaults=True)
+        return self.__dict__
     
     @staticmethod
     def fast(path: str, value):

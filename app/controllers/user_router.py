@@ -30,6 +30,13 @@ async def registration(user: UserCreate, db: UserFirebase = Depends(get_users)):
     return db.add(user)
 
 
+# @user_router.put("", response_model=UserBase, status_code=status.HTTP_201_CREATED)
+# async def update_user(new_email: UserBase, user: UserResponse=Depends(get_current_user), db: UserFirebase = Depends(get_users)):
+#     new_user = user.model_copy()
+#     new_user.email = new_email.email
+#     return db.update(new_user)
+
+
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_account(user=Depends(get_current_user), db: UserFirebase = Depends(get_users)):
     db.remove(user)
