@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class TokenData(BaseModel):
-    email: str
+    username: str
     created_at: datetime
 
 
@@ -27,14 +27,19 @@ class FilterModel(BaseModel):
     
 
 class UserCreate(BaseModel):
-    email: str
+    username: str
     password: str
 
 
 class UserBase(BaseModel):
-    email: str
+    username: str
 
 
 class UserResponse(BaseModel):
     id: str
-    email: str
+    username: str
+
+
+class TokenResponse(BaseModel):
+    token: Token
+    user: UserResponse
