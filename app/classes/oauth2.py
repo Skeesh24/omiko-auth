@@ -40,12 +40,12 @@ def verify_access_token(access_token: str, credentials_execption):
             access_token, config.JWT_SECRET_KEY, algorithms=config.JWT_ALGORYTHM
         )
 
-        email: Optional[str] = payload.get("email")
+        username: Optional[str] = payload.get("username")
 
-        if not email:
+        if not username:
             raise credentials_execption
 
-        data = TokenData(email=email, created_at=datetime.now())
+        data = TokenData(username=username, created_at=datetime.now())
 
         return data
     except JWTError:
@@ -61,6 +61,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: UserFirebase = Dep
 
     data = verify_access_token(token, credentials_execption=credentials_exception)
 
-    user = db.get(limit=1, where=FilterModel.fast("email", data.email))
+    user = db.get(limit=1, where=FilterModel.fast("username", data.username))
 
     return UserResponse(**user)
