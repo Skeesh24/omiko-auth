@@ -3,5 +3,5 @@ from fireo.fields import TextField
 
 
 class User(Model):
-    email = TextField()
+    username = TextField()
     password = TextField()
