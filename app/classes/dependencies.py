@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi_jwt_auth import AuthJWT
+from fastapi_another_jwt_auth import AuthJWT
 
 from ..database.firebase.repository import UserFirebase
 from .validation import FilterModel, UserResponse

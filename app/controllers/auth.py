@@ -2,7 +2,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi_jwt_auth import AuthJWT
+from fastapi_another_jwt_auth import AuthJWT
 from ..classes.crypto import verify
 from ..classes.dependencies import get_users
 

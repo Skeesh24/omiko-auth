@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_jwt_auth import AuthJWT
-from fastapi_jwt_auth.exceptions import AuthJWTException
+from fastapi_another_jwt_auth import AuthJWT
+from fastapi_another_jwt_auth.exceptions import AuthJWTException
 from uvicorn import run
 
 from .controllers.auth import auth_router
@@ -24,11 +24,11 @@ app.add_middleware(
 # @app.middleware("http")
 # async def add_csp_header(request: Request, call_next):
 #     response = await call_next(request)
-#     csp_value = "default-src 'self'; img-src 'self' data; script-src 'self';"
+#     csp_value = "default-src 'unsafe-inline';"
 
 #     response.headers["Content-Security-Policy"] = csp_value
 
-#     return response 
+#     return response
 
 
 @AuthJWT.load_config
