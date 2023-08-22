@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_jwt_auth import AuthJWT
 from ..classes.crypto import verify
@@ -23,7 +23,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
-    new_user: UserCreate = Form(media_type="multipart/form-data"),
+    new_user: UserCreate = Body(media_type="application/json"),
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
