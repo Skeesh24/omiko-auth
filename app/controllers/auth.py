@@ -57,19 +57,6 @@ async def login(
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@auth_router.options("/login")
-async def auth_options():
-    response = Response(
-        headers={
-            "Access-Control-Allow-Origins": "*",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Content-Type": "*",
-        }
-    )
-    return response
-
-
 @auth_router.post("/logout")
 async def logout(Auhthorize: AuthJWT = Depends()):
     # delete token from the database

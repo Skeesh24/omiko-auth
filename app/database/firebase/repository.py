@@ -61,14 +61,10 @@ class UserFirebase:
 
         ### returns None or raises exception
         """
-        query = self.users
-
         try:
-            new_elem = element.__dict__
-            print(new_elem.__dict__)
-
-            query.add(document_data=new_elem)
-            return new_elem
+            new_elem = User(**element.dict(exclude_defaults=True))
+            new_elem.save()
+            return new_elem.to_dict()
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

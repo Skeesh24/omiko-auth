@@ -32,14 +32,12 @@ async def get_user_by_email(email: str, db: UserFirebase = Depends(get_users)):
     response_model=UserResponse,
 )
 async def registration_and_authorization(
-    credentials: OAuth2PasswordRequestForm = Depends(),
+    user: UserCreate,
     db: UserFirebase = Depends(get_users),
 ):
     try:
-        user = UserCreate(username=credentials.username, password=credentials.password)
         user.password = get_hashed(user.password)
 
-        print(user.__dict__)
         response = db.add(user)
 
         return response
