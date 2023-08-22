@@ -1,5 +1,6 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_jwt_auth import AuthJWT
 from ..classes.crypto import verify
 from ..classes.dependencies import get_users
@@ -22,7 +23,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
-    new_user: UserCreate = Form(),
+    new_user: UserCreate = Form(media_type="multipart/form-data"),
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
@@ -41,7 +42,7 @@ async def login(
         subject=new_user.username,
         expires_time=timedelta(minutes=Settings().authjwt_refresh_token_expires),
     )
-    
+
     return TokenResponse(
         tokens=TokenType(
             access_token=access_token, refresh_token=refresh_token, token_type="Bearer"
@@ -59,6 +60,7 @@ async def logout(Auhthorize: AuthJWT = Depends()):
 @auth_router.post("/refresh", response_model=AccessToken)
 async def refresh(Auhthorize: AuthJWT = Depends()):
     Auhthorize.jwt_refresh_token_required()
+    # compare with the token in the database
 
     access_token = Auhthorize.create_access_token(Auhthorize.get_jwt_subject())
     return AccessToken(access_token=access_token)
