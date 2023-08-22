@@ -12,6 +12,24 @@ from .configuration import Settings
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_headers=["*"],
+    allow_methods=["*"],
+)
+
+
+@app.middleware("http")
+async def add_csp_header(request: Request, call_next):
+    response = await call_next(request)
+    csp_value = "default-src 'self'"
+
+    response.headers["Content-Security-Policy"] = csp_value
+
+    return response
+
 
 @AuthJWT.load_config
 def get_config():
@@ -23,15 +41,8 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_headers=["*"],
-    allow_methods=["*"],
-)
-app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(auth_router)
 
 
 @app.get("/")
