@@ -1,6 +1,6 @@
 from typing import List, Union
 from fastapi_jwt_auth import AuthJWT
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Form, status
 
 from app.classes.crypto import get_hashed
 from app.classes.dependencies import get_current_user, get_users
@@ -27,7 +27,7 @@ async def get_user_by_email(email: str, db: UserFirebase = Depends(get_users)):
 
 @user_router.post("", status_code=status.HTTP_201_CREATED, response_model=UserCreate)
 async def registration_and_authorization(
-    user: UserCreate, db: UserFirebase = Depends(get_users)
+    user: UserCreate = Form(), db: UserFirebase = Depends(get_users)
 ):
     user.password = get_hashed(user.password)
     response = db.add(user)

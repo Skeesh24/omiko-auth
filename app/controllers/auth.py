@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Form, HTTPException, status
 from fastapi_jwt_auth import AuthJWT
 from ..classes.crypto import verify
 from ..classes.dependencies import get_users
@@ -22,7 +22,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
-    new_user: UserCreate,
+    new_user: UserCreate = Form(),
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
@@ -41,7 +41,7 @@ async def login(
         subject=new_user.username,
         expires_time=timedelta(minutes=Settings().authjwt_refresh_token_expires),
     )
-
+    
     return TokenResponse(
         tokens=TokenType(
             access_token=access_token, refresh_token=refresh_token, token_type="Bearer"

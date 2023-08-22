@@ -23,8 +23,6 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 
-app.include_router(auth_router)
-app.include_router(user_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,6 +30,8 @@ app.add_middleware(
     allow_headers=["*"],
     allow_methods=["*"],
 )
+app.include_router(auth_router)
+app.include_router(user_router)
 
 
 @app.get("/")
