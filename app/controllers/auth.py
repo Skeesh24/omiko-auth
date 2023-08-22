@@ -68,4 +68,4 @@ async def refresh(Auhthorize: AuthJWT = Depends()):
     # compare with the token in the database
 
     access_token = Auhthorize.create_access_token(Auhthorize.get_jwt_subject())
-    return AccessToken(access_token=access_token)
+    return AccessToken(accessToken=access_token)
