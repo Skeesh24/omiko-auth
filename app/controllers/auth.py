@@ -23,7 +23,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
-    new_user: UserCreate = Body(media_type="application/json"),
+    new_user: UserCreate,
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
