@@ -21,14 +21,14 @@ app.add_middleware(
 )
 
 
-@app.middleware("http")
-async def add_csp_header(request: Request, call_next):
-    response = await call_next(request)
-    csp_value = "default-src 'self'"
+# @app.middleware("http")
+# async def add_csp_header(request: Request, call_next):
+#     response = await call_next(request)
+#     csp_value = "default-src 'self'; img-src 'self' data; script-src 'self';"
 
-    response.headers["Content-Security-Policy"] = csp_value
+#     response.headers["Content-Security-Policy"] = csp_value
 
-    return response
+#     return response 
 
 
 @AuthJWT.load_config

@@ -1,6 +1,7 @@
 from datetime import timedelta
-from fastapi import APIRouter, Body, Depends, Form, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_jwt_auth import AuthJWT
 from ..classes.crypto import verify
 from ..classes.dependencies import get_users
@@ -12,7 +13,6 @@ from ..classes.validation import (
     FilterModel,
     TokenResponse,
     TokenType,
-    UserCreate,
     UserResponse,
 )
 from ..configuration import Settings
@@ -21,27 +21,33 @@ from ..configuration import Settings
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
-    new_user: UserCreate,
+    credentials: OAuth2PasswordRequestForm = Depends(),
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
+    print("Login")
     # username checks here
-    user = db.get(limit=1, where=FilterModel.fast("username", new_user.username))
+    user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
+    print("user")
 
     # pass checks here
-    if not verify(new_user.password, user["password"]):
+    if not verify(credentials.password, user["password"]):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    print("pass")
 
     access_token = Authorize.create_access_token(
-        subject=new_user.username,
+        subject=credentials.username,
         expires_time=timedelta(minutes=Settings().authjwt_access_token_expires),
     )
     refresh_token = Authorize.create_refresh_token(
-        subject=new_user.username,
+        subject=credentials.username,
         expires_time=timedelta(minutes=Settings().authjwt_refresh_token_expires),
     )
+    print("tokens")
 
     return TokenResponse(
         tokens=TokenType(
@@ -49,6 +55,19 @@ async def login(
         ),
         user=UserResponse(**user),
     )
+
+
+@auth_router.options("/login")
+async def auth_options():
+    response = Response(
+        headers={
+            "Access-Control-Allow-Origins": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Content-Type": "*",
+        }
+    )
+    return response
 
 
 @auth_router.post("/logout")
