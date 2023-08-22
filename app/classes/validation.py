@@ -26,9 +26,9 @@ class FilterModel(BaseModel):
 
 
 class TokenType(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
+    accessToken: str
+    refreshToken: str
+    tokenType: str
 
 
 class TokenResponse(BaseModel):
@@ -37,4 +37,4 @@ class TokenResponse(BaseModel):
 
 
 class AccessToken(BaseModel):
-    access_token: str
+    accessToken: str

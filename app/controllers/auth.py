@@ -46,9 +46,9 @@ async def login(
 
     return TokenResponse(
         tokens=TokenType(
-            access_token=access_token,
-            refresh_token=refresh_token,
-            token_type="Bearer",
+            accessToken=access_token,
+            refreshToken=refresh_token,
+            tokenType="Bearer",
         ),
         user=UserResponse(**user),
     )
