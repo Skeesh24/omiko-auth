@@ -65,6 +65,8 @@ class UserFirebase:
 
         try:
             new_elem = element.__dict__
+            print(new_elem.__dict__)
+
             query.add(document_data=new_elem)
             return new_elem
         except Exception as e:

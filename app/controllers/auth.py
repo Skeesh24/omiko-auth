@@ -23,38 +23,40 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
+
 @auth_router.post("/login", response_model=TokenResponse)
 async def login(
     credentials: OAuth2PasswordRequestForm = Depends(),
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
-    print("Login")
-    # username checks here
-    user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
-    print("user")
+    try:
+        # username checks here
+        user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
-    # pass checks here
-    if not verify(credentials.password, user["password"]):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-    print("pass")
+        # pass checks here
+        if not verify(credentials.password, user["password"]):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
-    access_token = Authorize.create_access_token(
-        subject=credentials.username,
-        expires_time=timedelta(minutes=Settings().authjwt_access_token_expires),
-    )
-    refresh_token = Authorize.create_refresh_token(
-        subject=credentials.username,
-        expires_time=timedelta(minutes=Settings().authjwt_refresh_token_expires),
-    )
-    print("tokens")
+        access_token = Authorize.create_access_token(
+            subject=credentials.username,
+            expires_time=timedelta(minutes=Settings().authjwt_access_token_expires),
+        )
+        refresh_token = Authorize.create_refresh_token(
+            subject=credentials.username,
+            expires_time=timedelta(minutes=Settings().authjwt_refresh_token_expires),
+        )
 
-    return TokenResponse(
-        tokens=TokenType(
-            access_token=access_token, refresh_token=refresh_token, token_type="Bearer"
-        ),
-        user=UserResponse(**user),
-    )
+        return TokenResponse(
+            tokens=TokenType(
+                access_token=access_token,
+                refresh_token=refresh_token,
+                token_type="Bearer",
+            ),
+            user=UserResponse(**user),
+        )
+    except Exception as e:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @auth_router.options("/login")

@@ -1,6 +1,6 @@
 from typing import List, Union
 from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.classes.crypto import get_hashed
@@ -35,11 +35,16 @@ async def registration_and_authorization(
     credentials: OAuth2PasswordRequestForm = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
-    user = UserCreate(username=credentials.username, password=credentials.password)
-    user.password = get_hashed(user.password)
-    response = db.add(user)
+    try:
+        user = UserCreate(username=credentials.username, password=credentials.password)
+        user.password = get_hashed(user.password)
 
-    return response
+        print(user.__dict__)
+        response = db.add(user)
+
+        return response
+    except Exception as e:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
