@@ -30,31 +30,28 @@ async def login(
     Authorize: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
 ):
-    try:
-        # username checks here
-        user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
+    # username checks here
+    user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
-        # pass checks here
-        if not verify(credentials.password, user["password"]):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    # pass checks here
+    if not verify(credentials.password, user["password"]):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
-        access_token = Authorize.create_access_token(
-            subject=credentials.username,
-        )
-        refresh_token = Authorize.create_refresh_token(
-            subject=credentials.username,
-        )
+    access_token = Authorize.create_access_token(
+        subject=credentials.username,
+    )
+    refresh_token = Authorize.create_refresh_token(
+        subject=credentials.username,
+    )
 
-        return TokenResponse(
-            tokens=TokenType(
-                access_token=access_token,
-                refresh_token=refresh_token,
-                token_type="Bearer",
-            ),
-            user=UserResponse(**user),
-        )
-    except Exception as e:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
+    return TokenResponse(
+        tokens=TokenType(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="Bearer",
+        ),
+        user=UserResponse(**user),
+    )
 
 
 @auth_router.post("/logout")

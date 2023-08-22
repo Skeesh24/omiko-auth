@@ -35,14 +35,11 @@ async def registration_and_authorization(
     user: UserCreate,
     db: UserFirebase = Depends(get_users),
 ):
-    try:
-        user.password = get_hashed(user.password)
+    user.password = get_hashed(user.password)
 
-        response = db.add(user)
+    response = db.add(user)
 
-        return response
-    except Exception as e:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(e))
+    return response
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
