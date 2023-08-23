@@ -1,15 +1,16 @@
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
+from ..classes.services import MemcachedService
 from ..database.firebase.repository import UserFirebase
 from .validation import FilterModel, UserResponse
 
 
-def get_users():
+async def get_users():
     return UserFirebase()
 
 
-def get_current_user(
+async def get_current_user(
     authorization: AuthJWT = Depends(), db: UserFirebase = Depends(get_users)
 ) -> UserResponse:
     authorization.jwt_required()
@@ -19,3 +20,12 @@ def get_current_user(
     user = db.get(limit=1, where=FilterModel.fast("username", username))
 
     return UserResponse(**user)
+
+
+async def get_caching_service():
+    service = MemcachedService(["localhost:11211"])
+
+    try:
+        yield service
+    finally:
+        service.close()
