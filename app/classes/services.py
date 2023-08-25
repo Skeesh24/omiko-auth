@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Union
 
 from app.configuration import Settings
 from ..classes.interfaces import ICacheService
@@ -15,7 +15,7 @@ class MemcachedService(ICacheService):
     def set(self, key: str, value: str):
         return self.client.set(key, value)
 
-    def elem_and_status(self, key: str) -> (str | int, bool):
+    def elem_and_status(self, key: str) -> (Union[str, int], bool):
         value = self.get(key)
         if value is None or value == 0:
             return (None, False)

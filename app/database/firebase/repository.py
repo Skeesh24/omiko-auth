@@ -63,7 +63,7 @@ class UserFirebase:
         """
         # need to cache
         users = self.get(limit=1, where=FilterModel.fast("username", element.username))
-        if users["username"] is not None:
+        if users["username"] is not None: 
             raise HTTPException(
                 status.HTTP_409_CONFLICT, "this username is already in use"
             )
