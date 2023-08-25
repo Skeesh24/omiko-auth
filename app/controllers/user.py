@@ -31,7 +31,7 @@ async def get_user_by_email(email: str, db: UserFirebase = Depends(get_users)):
     status_code=status.HTTP_201_CREATED,
     response_model=UserResponse,
 )
-async def registration_and_authorization(
+async def registration(
     user: UserCreate,
     db: UserFirebase = Depends(get_users),
 ):
