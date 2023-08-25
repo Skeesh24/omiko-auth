@@ -62,6 +62,15 @@ class UserFirebase:
         ### returns None or raises exception
         """
         try:
+            # need to cache
+            users = self.users.get(
+                limit=1, where=FilterModel.fast("username", element.username)
+            )
+            if len(users) == 0:
+                raise HTTPException(
+                    status.HTTP_409_CONFLICT, "this username is already in use"
+                )
+
             new_elem = User(**element.dict(exclude_defaults=True))
             new_elem.save()
             return new_elem.to_dict()
