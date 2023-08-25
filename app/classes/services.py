@@ -9,7 +9,7 @@ class MemcachedService(ICacheService):
     def __init__(self, hosts) -> None:
         self.client = Client(hosts)
 
-    def get(self, key: str):
+    def get(self, key: str) -> str:
         return self.client.get(key)
 
     def set(self, key: str, value: str):

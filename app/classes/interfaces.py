@@ -4,15 +4,15 @@ from typing import Any, Union
 
 class ICacheService(ABC):
     @abstractclassmethod
-    def get(self, key: str) -> tuple[int, str, None]:
+    def get(self, key: str) -> str:
         pass
 
     @abstractclassmethod
-    def set(self, key: str, value: str) -> Any | bool:
+    def set(self, key: str, value: str) -> bool:
         pass
 
     @abstractclassmethod
-    def elem_and_status(self, key: str) -> Union[tuple[int, str, None], bool]:
+    def elem_and_status(self, key: str) -> Union[str, bool]:
         pass
 
     @abstractclassmethod
