@@ -42,6 +42,9 @@ async def login(
     if not success:
         user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
+    if user == {} or user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
     # pass checks here
     if not verify(credentials.password, user["password"]):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
