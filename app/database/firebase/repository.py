@@ -101,7 +101,4 @@ class UserFirebase:
         ### returns None or raises exception
         """
 
-        try:
-            self.db.recursive_delete(self.users.document(user.id))
-        except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        self.db.recursive_delete(self.users.document(user.id))
