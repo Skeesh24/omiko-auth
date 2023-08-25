@@ -15,8 +15,8 @@ class MemcachedService(ICacheService):
     def set(self, key: str, value: str):
         return self.client.set(key, value)
 
-    def elem_and_status(self, key: str) -> ((Any | int | None), bool):
-        value = self.client.get(key)
+    def elem_and_status(self, key: str) -> (str | int, bool):
+        value = self.get(key)
         if value is None or value == 0:
             return (None, False)
         return (value, True)
@@ -29,14 +29,11 @@ class MemcachedService(ICacheService):
             self.client.disconnect_all()
         except Exception as e:
             # add logging
-            print("Error closing memcached session")
+            print("Error closing memcached session: " + str(e))
         finally:
             # ?
             # del self.client
             ...
 
 
-
 SettingsService = Settings()
-    
-    
