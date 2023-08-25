@@ -33,6 +33,9 @@ class UserFirebase:
 
         elements = query.get()
 
+        if len(elements) == 0:
+            return {}
+
         if limit == 1:
             res: dict = elements[0].to_dict()
             res.update({"id": elements[0].id})
@@ -42,9 +45,6 @@ class UserFirebase:
             res: dict = elements._data
             res.update({"id": elements.id})
             return res
-
-        if len(elements) == 0:
-            return []
 
         res: list[dict] = [e._data for e in elements]
 
@@ -63,7 +63,7 @@ class UserFirebase:
         """
         # need to cache
         users = self.get(limit=1, where=FilterModel.fast("username", element.username))
-        if users["username"] is not None: 
+        if users.get("username"): 
             raise HTTPException(
                 status.HTTP_409_CONFLICT, "this username is already in use"
             )
