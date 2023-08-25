@@ -70,7 +70,7 @@ async def login(
     )
 
 
-@auth_router.post("/logout")
+@auth_router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
     Auhthorize: AuthJWT = Depends(), cache: ICacheService = Depends(get_caching_service)
 ):
