@@ -33,9 +33,6 @@ class UserFirebase:
 
         elements = query.get()
 
-        if len(elements) == 0:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
         if limit == 1:
             res: dict = elements[0].to_dict()
             res.update({"id": elements[0].id})
@@ -45,6 +42,9 @@ class UserFirebase:
             res: dict = elements._data
             res.update({"id": elements.id})
             return res
+
+        if len(elements) == 0:
+            return []
 
         res: list[dict] = [e._data for e in elements]
 
