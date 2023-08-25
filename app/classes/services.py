@@ -1,4 +1,6 @@
 from typing import Any
+
+from app.configuration import Settings
 from ..classes.interfaces import ICacheService
 from memcache import Client
 
@@ -15,7 +17,7 @@ class MemcachedService(ICacheService):
 
     def elem_and_status(self, key: str) -> ((Any | int | None), bool):
         value = self.client.get(key)
-        if value == "":
+        if value is None or value == 0:
             return (None, False)
         return (value, True)
 
@@ -32,3 +34,9 @@ class MemcachedService(ICacheService):
             # ?
             # del self.client
             ...
+
+
+
+SettingsService = Settings()
+    
+    
