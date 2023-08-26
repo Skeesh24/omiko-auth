@@ -51,7 +51,7 @@ async def login(
 
     access_token = Authorize.create_access_token(
         subject=credentials.username,
-        expires_time=timedelta(minutes=settings.authjwt_access_token_expires),
+        expires_time=timedelta(minutes=5),
     )
     refresh_token = Authorize.create_refresh_token(
         subject=credentials.username,
