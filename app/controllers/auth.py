@@ -4,13 +4,13 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT
 from jwt import decode
 
-from ..classes.interfaces import ICacheService
-from ..classes.crypto import verify
-from ..classes.dependencies import get_caching_service, get_users, get_settings
+from classes.interfaces import ICacheService
+from classes.crypto import verify
+from classes.dependencies import get_caching_service, get_users, get_settings
 
-from app.database.firebase.repository import UserFirebase
+from database.firebase.repository import UserFirebase
 
-from app.classes.validation import (
+from classes.validation import (
     AccessToken,
     FilterModel,
     TokenResponse,
@@ -37,11 +37,11 @@ async def login(
     cache: ICacheService = Depends(get_caching_service),
     settings=Depends(get_settings),
 ):
-    # username checks here
     user, success = cache.elem_and_status(credentials.username)
     if not success:
         user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
+    # username checks here
     if user == {} or user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 

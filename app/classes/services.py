@@ -1,7 +1,7 @@
 from typing import Union
 
-from app.configuration import Settings
-from ..classes.interfaces import ICacheService
+from configuration import Settings
+from classes.interfaces import ICacheService
 from memcache import Client
 
 

@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 
-from ...classes.validation import FilterModel, UserCreate, UserResponse
-from .firebase import get_db
-from .entities import User
+from classes.validation import FilterModel, UserCreate, UserResponse
+from database.firebase.firebase import get_db
+from database.firebase.entities import User
 
 
 class UserFirebase:
@@ -63,7 +63,7 @@ class UserFirebase:
         """
         # need to cache
         users = self.get(limit=1, where=FilterModel.fast("username", element.username))
-        if users.get("username"): 
+        if users.get("username"):
             raise HTTPException(
                 status.HTTP_409_CONFLICT, "this username is already in use"
             )

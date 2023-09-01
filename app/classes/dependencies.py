@@ -1,9 +1,9 @@
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
-from ..classes.services import MemcachedService, SettingsService
-from ..database.firebase.repository import UserFirebase
-from .validation import FilterModel, UserResponse
+from classes.services import MemcachedService, SettingsService
+from database.firebase.repository import UserFirebase
+from classes.validation import FilterModel, UserResponse
 
 
 async def get_users():

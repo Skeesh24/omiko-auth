@@ -5,9 +5,9 @@ from fastapi_another_jwt_auth import AuthJWT
 from fastapi_another_jwt_auth.exceptions import AuthJWTException
 from uvicorn import run
 
-from .controllers.auth import auth_router
-from .controllers.user import user_router
-from .configuration import Settings
+from controllers.auth import auth_router
+from controllers.user import user_router
+from configuration import Settings
 
 
 app = FastAPI()
@@ -51,4 +51,4 @@ async def root():
 
 
 if __name__ == "__main__":
-    run(app, port=10000)
+    run(app, port=8080)
