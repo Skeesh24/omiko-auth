@@ -82,6 +82,7 @@ requests==2.31.0
 requests-toolbelt==1.0.0
 rfc3986==1.5.0
 rsa==4.9
+redis==2.4.7
 semver==2.13.0
 six==1.16.0
 smmap==5.0.0
