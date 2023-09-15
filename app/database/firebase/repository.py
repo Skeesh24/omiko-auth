@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 
-from classes.validation import FilterModel, UserCreate, UserResponse
-from database.firebase.firebase import get_db
-from database.firebase.entities import User
+from ...classes.validation import FilterModel, UserCreate, UserResponse
+from ...database.firebase.firebase import get_db
+from ...database.firebase.entities import User
 
 
 class UserFirebase:

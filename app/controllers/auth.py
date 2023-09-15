@@ -4,13 +4,13 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT
 from jwt import decode
 
-from classes.interfaces import ICacheService
-from classes.crypto import verify
-from classes.dependencies import get_caching_service, get_users, get_settings
+from ..classes.interfaces import ICacheService
+from ..classes.crypto import verify
+from ..classes.dependencies import get_caching_service, get_users, get_settings
 
-from database.firebase.repository import UserFirebase
+from ..database.firebase.repository import UserFirebase
 
-from classes.validation import (
+from ..classes.validation import (
     AccessToken,
     FilterModel,
     TokenResponse,

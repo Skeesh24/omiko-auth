@@ -1,10 +1,10 @@
 from typing import List, Union
 from fastapi import APIRouter, Depends, status
 
-from classes.crypto import get_hashed
-from classes.dependencies import get_current_user, get_users
-from database.firebase.repository import UserFirebase
-from classes.validation import FilterModel, UserCreate, UserResponse
+from ..classes.crypto import get_hashed
+from ..classes.dependencies import get_current_user, get_users
+from ..database.firebase.repository import UserFirebase
+from ..classes.validation import FilterModel, UserCreate, UserResponse
 
 
 user_router = APIRouter(prefix="/user", tags=["user"])
