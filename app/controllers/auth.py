@@ -1,15 +1,13 @@
 from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT
 from jwt import decode
 
-from ..classes.interfaces import ICacheService
 from ..classes.crypto import verify
-from ..classes.dependencies import get_caching_service, get_users, get_settings
-
-from ..database.firebase.repository import UserFirebase
-
+from ..classes.dependencies import get_caching_service, get_settings, get_users
+from ..classes.interfaces import ICacheService
 from ..classes.validation import (
     AccessToken,
     FilterModel,
@@ -17,7 +15,7 @@ from ..classes.validation import (
     TokenType,
     UserResponse,
 )
-
+from ..database.firebase.repository import UserFirebase
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -38,6 +36,7 @@ async def login(
     settings=Depends(get_settings),
 ):
     user, success = cache.elem_and_status(credentials.username)
+    print("from cache status", success)
     if not success:
         user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
