@@ -37,9 +37,9 @@ async def login(
     cache: ICacheService = Depends(get_caching_service),
     settings=Depends(get_settings),
 ):
-    # user, success = cache.elem_and_status(credentials.username)
-    # if not success:
-    user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
+    user, success = cache.elem_and_status(credentials.username)
+    if not success:
+        user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 
     # username checks here
     if user == {} or user is None:
@@ -59,9 +59,9 @@ async def login(
     )
 
     # caching is here
-    # if not success:
-        # cache.set(credentials.username + "_profile", user)
-    # cache.set(credentials.username + "_token", refresh_token)
+    if not success:
+        cache.set(credentials.username + "_profile", user)
+    cache.set(credentials.username + "_token", refresh_token)
 
     return TokenResponse(
         tokens=TokenType(
