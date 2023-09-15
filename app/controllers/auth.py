@@ -36,7 +36,7 @@ async def login(
     settings=Depends(get_settings),
 ):
     user, success = cache.elem_and_status(credentials.username)
-    print("from cache status", success)
+    print("from cache: success is ", success)
     if not success:
         user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
 

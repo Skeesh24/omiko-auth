@@ -26,7 +26,7 @@ async def get_current_user(
 
 
 async def get_caching_service():
-    service = RedisService("redis://red-ck264o021fec73bsm410:6379")
+    service = RedisService(environ.get("REDIS_EXTERNAL"))
 
     try:
         yield service
