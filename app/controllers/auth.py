@@ -59,7 +59,7 @@ async def login(
 
     # caching is here
     if not success:
-        cache.set(credentials.username + "_profile", user)
+        cache.set(credentials.username + "_profile", str(user))
     cache.set(credentials.username + "_token", refresh_token)
 
     return TokenResponse(

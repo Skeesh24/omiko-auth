@@ -1,9 +1,12 @@
+from os import environ
+
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
 from ..classes.services import MemcachedService, RedisService, SettingsService
-from ..database.firebase.repository import UserFirebase
 from ..classes.validation import FilterModel, UserResponse
+from ..configuration import Settings
+from ..database.firebase.repository import UserFirebase
 
 
 async def get_users():
@@ -24,7 +27,7 @@ async def get_current_user(
 
 async def get_caching_service():
     service = RedisService("redis://red-ck264o021fec73bsm410:6379")
-    
+
     try:
         yield service
     finally:
