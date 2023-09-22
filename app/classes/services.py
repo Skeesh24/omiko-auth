@@ -50,7 +50,7 @@ class RedisService(ICacheService):
 
     def elem_and_status(self, key: str) -> (Union[str, int], bool):
         value = self.get(key)
-        if value is None or value == 0:
+        if value is None or value == "" or value == 0:
             return (None, False)
         return (value, True)
 
