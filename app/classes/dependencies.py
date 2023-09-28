@@ -3,8 +3,8 @@ from os import environ
 
 from classes.interfaces import ICacheService
 from classes.services import RedisService, SettingsService
-from classes.validation import FilterModel, UserResponse
-from database.firebase.repository import UserFirebase, UserPostgres
+from classes.validation import UserResponse
+from database.repository import UserFirebase, UserPostgres
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
