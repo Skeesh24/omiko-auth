@@ -1,22 +1,21 @@
 from datetime import timedelta
+from json import loads
+from os import environ
 
+from classes.crypto import verify
+from classes.dependencies import (
+    get_caching_service,
+    get_current_user,
+    get_settings,
+    get_users,
+)
+from classes.interfaces import ICacheService, IRepository
+from classes.validation import AccessToken, TokenResponse, TokenType, UserResponse
+from database.postgres.entities import PostgresUser
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT
 from jwt import decode
-from json import loads
-
-from ..classes.crypto import verify
-from ..classes.dependencies import get_caching_service, get_settings, get_users
-from ..classes.interfaces import ICacheService
-from ..classes.validation import (
-    AccessToken,
-    FilterModel,
-    TokenResponse,
-    TokenType,
-    UserResponse,
-)
-from ..database.firebase.repository import UserFirebase
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -32,22 +31,18 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 async def login(
     credentials: OAuth2PasswordRequestForm = Depends(),
     Authorize: AuthJWT = Depends(),
-    db: UserFirebase = Depends(get_users),
+    db: IRepository = Depends(get_users),
     cache: ICacheService = Depends(get_caching_service),
     settings=Depends(get_settings),
 ):
-    # user, success = cache.elem_and_status(credentials.username + "_profile")
-    # user = loads(user.replace("\"", "*").replace("\'", "\"").replace("*", "\'"))
-    
-    # if not success:
-    user = db.get(limit=1, where=FilterModel.fast("username", credentials.username))
-    
+    user = db.get(limit=1, username=credentials.username)
+
     # username checks here
     if user == {} or user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     # pass checks here
-    if not verify(credentials.password, user["password"]):
+    if not verify(credentials.password, user.password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     access_token = Authorize.create_access_token(
@@ -59,10 +54,8 @@ async def login(
         expires_time=timedelta(days=settings.authjwt_refresh_token_expires),
     )
 
-    # caching is here
-    # if not success:
-    #     cache.set(credentials.username + "_profile", str(user))
-    # cache.set(credentials.username + "_token", refresh_token)
+    if not bool(environ.get("DEBUG")):
+        cache.set(credentials.username + "_token", refresh_token)
 
     return TokenResponse(
         tokens=TokenType(
@@ -70,7 +63,7 @@ async def login(
             refreshToken=refresh_token,
             tokenType="Bearer",
         ),
-        user=UserResponse(**user),
+        user=UserResponse(**user.__dict__),
     )
 
 
