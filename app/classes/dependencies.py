@@ -1,28 +1,16 @@
+from json import loads
 from os import environ
 
+from classes.interfaces import ICacheService
+from classes.services import RedisService, SettingsService
+from classes.validation import FilterModel, UserResponse
+from database.firebase.repository import UserFirebase, UserPostgres
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
-from ..classes.services import MemcachedService, RedisService, SettingsService
-from ..classes.validation import FilterModel, UserResponse
-from ..configuration import Settings
-from ..database.firebase.repository import UserFirebase
-
 
 async def get_users():
-    return UserFirebase()
-
-
-async def get_current_user(
-    authorization: AuthJWT = Depends(), db: UserFirebase = Depends(get_users)
-) -> UserResponse:
-    authorization.jwt_required()
-
-    username = authorization.get_jwt_subject()
-
-    user = db.get(limit=1, where=FilterModel.fast("username", username))
-
-    return UserResponse(**user)
+    return UserPostgres()
 
 
 async def get_caching_service():
@@ -32,6 +20,28 @@ async def get_caching_service():
         yield service
     finally:
         service.close()
+
+
+async def get_current_user(
+    authorization: AuthJWT = Depends(),
+    db: UserFirebase = Depends(get_users),
+    cache: ICacheService = Depends(get_caching_service),
+) -> UserResponse:
+    authorization.jwt_required()
+
+    username = authorization.get_jwt_subject()
+
+    if not bool(environ.get("DEBUG")):
+        user, success = cache.elem_and_status(username + "_profile")
+        user = loads(user.replace('"', "*").replace("'", '"').replace("*", "'"))
+
+        if not success:
+            user = db.get(limit=1, offset=0, username=username)
+            cache.set(username + "_profile", str(user))
+    else:
+        user = db.get(limit=1, offset=0, username=username)
+
+    return UserResponse(**user.__dict__)
 
 
 async def get_settings():
