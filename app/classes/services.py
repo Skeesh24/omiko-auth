@@ -3,8 +3,8 @@ from typing import Union
 from memcache import Client
 from redis import Redis
 
-from ..classes.interfaces import ICacheService
-from ..configuration import Settings
+from classes.interfaces import ICacheService
+from configuration import Settings
 
 
 class MemcachedService(ICacheService):
