@@ -1,7 +1,7 @@
-from fireo.models import Model
 from fireo.fields import TextField
+from fireo.models import Model
 
 
-class User(Model):
+class FireUser(Model):
     username = TextField()
     password = TextField()
