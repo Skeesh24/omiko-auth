@@ -39,8 +39,11 @@ async def registration(
     db: IRepository = Depends(get_users),
 ):
     user.password = get_hashed(user.password)
-    new_user: PostgresUser = db.add(PostgresUser(**user.__dict__))
+    new_user: PostgresUser = PostgresUser(**user.__dict__)
+
+    db.add(new_user)
     d = {k: v for k, v in new_user.__dict__.items() if isinstance(v, str)}
+
     print("THERE IS RESPONSE MAPPING", d)
     return d
 
