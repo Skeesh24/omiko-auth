@@ -10,7 +10,7 @@ from classes.dependencies import (
     get_users,
 )
 from classes.interfaces import ICacheService, IRepository
-from classes.validation import AccessToken, TokenResponse, TokenType, UserResponse
+from classes.validation import AccessToken, RefreshToken, TokenResponse, TokenType, UserResponse
 from database.postgres.entities import PostgresUser
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -81,13 +81,13 @@ async def logout(
         )
 
 
-@auth_router.post("/refresh", response_model=AccessToken)
+@auth_router.post("/refresh", response_model=RefreshToken)
 async def refresh(
     Authorize: AuthJWT = Depends(),
     cache: ICacheService = Depends(get_caching_service),
     settings=Depends(get_settings),
 ):
-    Authorize.jwt_required()
+    Authorize.jwt_refresh_token_required()
 
     # compare with the token in the database
     username = Authorize.get_jwt_subject()
@@ -104,5 +104,5 @@ async def refresh(
             status_code=status.HTTP_400_BAD_REQUEST, detail="received invalid token"
         )
 
-    access_token = Authorize.create_access_token(username)
-    return AccessToken(accessToken=access_token)
+    refresh_token = Authorize.create_refresh_token(username)
+    return RefreshToken(refreshToken=refresh_token)
