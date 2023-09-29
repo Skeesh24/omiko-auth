@@ -1,10 +1,28 @@
 from typing import Union
 
+import pika
+from classes.interfaces import IBroker, ICacheService
+from configuration import Settings
 from memcache import Client
 from redis import Redis
 
-from classes.interfaces import ICacheService
-from configuration import Settings
+
+class RabbitMQBroker(IBroker):
+    def create_connection(self, host_name: str, queue_name: str):
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host_name))
+        channel = connection.channel()
+        channel.queue_declare(queue=queue_name)
+        self.connection = connection
+        self.channel = channel
+        return channel
+
+    def publish(self, message: str) -> None:
+        self.channel.basic_publish(
+            exchange="", routing_key=SettingsService.RECOVERY_QUEUE, body=message
+        )
+
+    def close(self):
+        self.connection.close()
 
 
 class MemcachedService(ICacheService):
