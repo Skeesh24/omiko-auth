@@ -52,9 +52,9 @@ async def password_recovery(
     db: IRepository = Depends(get_users),
     broker: IBroker = Depends(get_message_broker),
 ):
-    connection = broker.create_connection(SettingsService.BROKER_HOST, queue_name=SettingsService.RECOVERY_QUEUE)
-    connection.publish(email)
-    connection.close()
+    broker.create_connection(SettingsService.BROKER_HOST, queue_name=SettingsService.RECOVERY_QUEUE)
+    broker.publish(email)
+    broker.close()
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
