@@ -26,7 +26,7 @@ async def get_all_users(
 @user_router.get("/{email}", response_model=UserResponse)
 async def get_user_by_email(email: str, db: IRepository = Depends(get_users)):
     user = db.get(limit=1, offset=0, username=email)
-    return user[0].__dict__
+    return user.__dict__
 
 
 @user_router.post(
@@ -40,7 +40,9 @@ async def registration(
 ):
     user.password = get_hashed(user.password)
     new_user: PostgresUser = db.add(PostgresUser(**user.__dict__))
-    return {k: v for k, v in new_user.__dict__.items() if isinstance(v, str)}
+    d = {k: v for k, v in new_user.__dict__.items() if isinstance(v, str)}
+    print("THERE IS RESPONSE MAPPING", d)
+    return d
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
