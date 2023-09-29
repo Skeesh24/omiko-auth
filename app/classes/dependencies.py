@@ -2,7 +2,7 @@ from json import loads
 from os import environ
 
 from classes.interfaces import ICacheService
-from classes.services import RedisService, SettingsService
+from classes.services import RabbitMQBroker, RedisService, SettingsService
 from classes.validation import UserResponse
 from database.repository import UserFirebase, UserPostgres
 from fastapi import Depends
@@ -13,8 +13,12 @@ async def get_users():
     return UserPostgres()
 
 
+async def get_message_broker():
+    return RabbitMQBroker()
+
+
 async def get_caching_service():
-    service = RedisService(environ.get("REDIS_EXTERNAL"))
+    service = RedisService(SettingsService.REDIS_EXTERNAL)
 
     try:
         yield service
@@ -31,7 +35,7 @@ async def get_current_user(
 
     username = authorization.get_jwt_subject()
 
-    if not bool(environ.get("DEBUG")):
+    if not bool(SettingsService.DEBUG):
         user, success = cache.elem_and_status(username + "_profile")
         user = loads(user.replace('"', "*").replace("'", '"').replace("*", "'"))
 
