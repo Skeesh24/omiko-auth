@@ -54,7 +54,7 @@ async def login(
         expires_time=timedelta(days=settings.authjwt_refresh_token_expires),
     )
 
-    if not bool(environ.get("DEBUG")):
+    if not bool(settings.DEBUG):
         cache.set(credentials.username + "_token", refresh_token)
 
     return TokenResponse(
