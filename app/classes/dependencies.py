@@ -26,7 +26,7 @@ async def get_current_user(
     authorization: AuthJWT = Depends(),
     db: UserFirebase = Depends(get_users),
     cache: ICacheService = Depends(get_caching_service),
-) -> UserResponse:
+) -> UserPostgres:
     authorization.jwt_required()
 
     username = authorization.get_jwt_subject()
@@ -41,7 +41,7 @@ async def get_current_user(
     else:
         user = db.get(limit=1, offset=0, username=username)
 
-    return UserResponse(**user.__dict__)
+    return user
 
 
 async def get_settings():
