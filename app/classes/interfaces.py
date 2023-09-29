@@ -40,8 +40,8 @@ class ICacheService(ABC):
 
 
 class IBroker(ABC):
-    @abstractclassmethod   
-    def create_connection(self, host_name: str, queue_name: str) -> Any:
+    @abstractclassmethod
+    def create_connection(self, host_name: str, queue_name: str) -> None:
         pass
 
     def publish(self, message: str) -> None:

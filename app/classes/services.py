@@ -8,13 +8,12 @@ from redis import Redis
 
 
 class RabbitMQBroker(IBroker):
-    def create_connection(self, host_name: str, queue_name: str):
+    def create_connection(self, host_name: str, queue_name: str) -> None:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host_name))
         channel = connection.channel()
         channel.queue_declare(queue=queue_name)
         self.connection = connection
         self.channel = channel
-        return channel
 
     def publish(self, message: str) -> None:
         self.channel.basic_publish(
