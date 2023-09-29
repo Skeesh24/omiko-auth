@@ -1,26 +1,27 @@
-from typing import List, Union
-
 from classes.crypto import get_hashed
-from classes.dependencies import get_current_user, get_users
-from classes.interfaces import IRepository
+from classes.dependencies import get_current_user, get_message_broker, get_users
+from classes.functions import to_dict
+from classes.interfaces import IBroker, IRepository
 from classes.validation import UserCreate, UserResponse
-from controllers.functions import to_dict
+from classes.services import SettingsService
 from database.postgres.entities import PostgresUser
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Body, Depends, status
 
 user_router = APIRouter(prefix="/user", tags=["user"])
 
 
-@user_router.get("", response_model=Union[List[UserResponse], UserResponse])
+@user_router.get("", response_model=list[UserResponse])
 async def get_all_users(
     limit: int = 5, offset: int = 0, db: IRepository = Depends(get_users)
 ):
-    users: list[PostgresUser] = db.get(
-        limit=limit,
-        offset=offset,
-    )
+    users: list[PostgresUser] = [
+        db.get(
+            limit=limit,
+            offset=offset,
+        )
+    ]
 
-    return [to_dict(user) for user in users]
+    return [to_dict(user) for user in users] if users[0] is not None else []
 
 
 @user_router.get("/{email}", response_model=UserResponse)
@@ -43,6 +44,17 @@ async def registration(
     db.add(new_user)
     result = to_dict(new_user)
     return result
+
+
+@user_router.post("/recovery", status_code=status.HTTP_201_CREATED)
+async def password_recovery(
+    email: str = Body(),
+    db: IRepository = Depends(get_users),
+    broker: IBroker = Depends(get_message_broker),
+):
+    connection = broker.create_connection(SettingsService.BROKER_HOST, queue_name=SettingsService.RECOVERY_QUEUE)
+    connection.publish(email)
+    connection.close()
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
