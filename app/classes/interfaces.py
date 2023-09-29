@@ -1,8 +1,6 @@
 from abc import ABC, abstractclassmethod
 from typing import Any, Union
 
-from database.postgres.entities import PostgresUser
-
 
 class IRepository(ABC):
     @abstractclassmethod
@@ -37,5 +35,17 @@ class ICacheService(ABC):
         pass
 
     @abstractclassmethod
+    def close(self) -> None:
+        pass
+
+
+class IBroker(ABC):
+    @abstractclassmethod   
+    def create_connection(self, host_name: str, queue_name: str) -> Any:
+        pass
+
+    def publish(self, message: str) -> None:
+        pass
+
     def close(self) -> None:
         pass
