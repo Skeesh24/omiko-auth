@@ -4,9 +4,9 @@ from classes.crypto import get_hashed
 from classes.dependencies import get_current_user, get_users
 from classes.interfaces import IRepository
 from classes.validation import UserCreate, UserResponse
+from controllers.functions import to_dict
 from database.postgres.entities import PostgresUser
 from fastapi import APIRouter, Depends, status
-from fastapi_another_jwt_auth import AuthJWT
 
 user_router = APIRouter(prefix="/user", tags=["user"])
 
@@ -20,13 +20,13 @@ async def get_all_users(
         offset=offset,
     )
 
-    return [user.__dict__ for user in users]
+    return [to_dict(user) for user in users]
 
 
 @user_router.get("/{email}", response_model=UserResponse)
 async def get_user_by_email(email: str, db: IRepository = Depends(get_users)):
     user = db.get(limit=1, offset=0, username=email)
-    return user.__dict__
+    return to_dict(user)
 
 
 @user_router.post(
@@ -40,12 +40,9 @@ async def registration(
 ):
     user.password = get_hashed(user.password)
     new_user: PostgresUser = PostgresUser(**user.__dict__)
-
     db.add(new_user)
-    d = {k: v for k, v in new_user.__dict__.items() if isinstance(v, str)}
-
-    print("THERE IS RESPONSE MAPPING", d)
-    return d
+    result = to_dict(new_user)
+    return result
 
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
