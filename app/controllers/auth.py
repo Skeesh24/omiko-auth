@@ -87,7 +87,7 @@ async def refresh(
     cache: ICacheService = Depends(get_caching_service),
     settings=Depends(get_settings),
 ):
-    Authorize.jwt_refresh_token_required()
+    Authorize.jwt_required()
 
     # compare with the token in the database
     username = Authorize.get_jwt_subject()
