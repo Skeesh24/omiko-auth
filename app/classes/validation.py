@@ -1,4 +1,5 @@
 from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -38,3 +39,7 @@ class TokenResponse(BaseModel):
 
 class AccessToken(BaseModel):
     accessToken: str
+
+
+class RefreshToken(BaseModel):
+    refreshToken: str
