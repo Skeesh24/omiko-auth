@@ -4,10 +4,10 @@ from os import environ
 
 @dataclass
 class sett:
-    PROVIDER: str = "postgresql"
-    DRIVER: str = "pg8000"
-    USER: str = "postgres"
-    PASSWORD: str = environ.get("POSTGRES_PASSWORD")
-    HOST: str = "localhost"
-    PORT: int = 5432
-    DBNAME: str = "omiko-auth"
+    PROVIDER: str = environ.get("PROVIDER")
+    DRIVER: str = environ.get("DRIVER")
+    USER: str = environ.get("USER")
+    PASSWORD: str = environ.get("PASSWORD")
+    HOST: str = environ.get("HOST")
+    PORT: int = int(environ.get("PORT"))
+    DBNAME: str = environ.get("DBNAME")

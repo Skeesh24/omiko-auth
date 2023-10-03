@@ -1,9 +1,10 @@
-from json import loads
+from ast import literal_eval
 from os import environ
 
+from classes.settings import sett
 from classes.interfaces import ICacheService
 from classes.services import RabbitMQBroker, RedisService, SettingsService
-from classes.validation import UserResponse
+from classes.validation import UserResponse, UserInternal
 from database.repository import UserFirebase, UserPostgres
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
@@ -14,11 +15,11 @@ async def get_users():
 
 
 async def get_message_broker():
-    return RabbitMQBroker()
+    return RabbitMQBroker(sett.BROKER_HOST)
 
 
 async def get_caching_service():
-    service = RedisService(SettingsService.REDIS_EXTERNAL)
+    service = RedisService(sett.REDIS_EXTERNAL)
 
     try:
         yield service
@@ -34,14 +35,15 @@ async def get_current_user(
     authorization.jwt_required()
 
     username = authorization.get_jwt_subject()
-
-    if not bool(SettingsService.DEBUG):
-        user, success = cache.elem_and_status(username + "_profile")
-        user = loads(user.replace('"', "*").replace("'", '"').replace("*", "'"))
+    user = None
+    if not bool(sett.DEBUG):
+        user_dict, success = cache.elem_and_status(username + "_profile")
 
         if not success:
             user = db.get(limit=1, offset=0, username=username)
-            cache.set(username + "_profile", str(user))
+            cache.set(username + "_profile", str({k: v for k, v in user.__dict__.items() if not "_" in k}))
+        else:
+            user = UserInternal(**literal_eval(user_dict.decode('utf-8')))
     else:
         user = db.get(limit=1, offset=0, username=username)
 

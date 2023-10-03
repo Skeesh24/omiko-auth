@@ -13,6 +13,12 @@ class UserResponse(BaseModel):
     username: str
 
 
+class UserInternal(BaseModel):
+    id: str
+    username: str
+    password: str
+
+
 class FilterModel(BaseModel):
     field_path: str
     op_string: str

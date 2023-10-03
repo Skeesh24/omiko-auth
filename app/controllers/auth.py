@@ -1,5 +1,5 @@
 from datetime import timedelta
-from json import loads
+from classes.settings import sett
 from os import environ
 
 from classes.crypto import verify
@@ -54,7 +54,7 @@ async def login(
         expires_time=timedelta(days=settings.authjwt_refresh_token_expires),
     )
 
-    if not bool(settings.DEBUG):
+    if not bool(sett.DEBUG):
         cache.set(credentials.username + "_token", refresh_token)
 
     return TokenResponse(
@@ -103,6 +103,6 @@ async def refresh(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="received invalid token"
         )
-
     refresh_token = Authorize.create_refresh_token(username)
+    cache.set(username + "_token", refresh_token)
     return RefreshToken(refreshToken=refresh_token)

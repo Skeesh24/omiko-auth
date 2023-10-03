@@ -2,14 +2,19 @@ from typing import Union
 
 import pika
 from classes.interfaces import IBroker, ICacheService
+from classes.settings import sett
 from configuration import Settings
 from memcache import Client
 from redis import Redis
 
 
 class RabbitMQBroker(IBroker):
-    def create_connection(self, host_name: str, queue_name: str) -> None:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host_name))
+    def __init__(self, host: str) -> None:
+        self.host = host
+
+
+    def create_connection(self, queue_name: str) -> None:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
         channel = connection.channel()
         channel.queue_declare(queue=queue_name)
         self.connection = connection
@@ -17,7 +22,7 @@ class RabbitMQBroker(IBroker):
 
     def publish(self, message: str) -> None:
         self.channel.basic_publish(
-            exchange="", routing_key=SettingsService.RECOVERY_QUEUE, body=message
+            exchange="", routing_key=sett.RECOVERY_QUEUE, body=message
         )
 
     def close(self):
