@@ -1,17 +1,20 @@
-from classes.crypto import get_hashed
-from classes.dependencies import get_current_user, get_message_broker, get_users, get_caching_service
-from classes.functions import to_dict
-from classes.interfaces import IBroker, IRepository, ICacheService
-from classes.validation import UserCreate, UserResponse
-from classes.services import SettingsService
-from classes.settings import sett
-from database.postgres.entities import PostgresUser
-from fastapi import APIRouter, Body, Depends, status, HTTPException
-from sqlalchemy.exc import NoInspectionAvailable
 from os import environ
 
+from classes.crypto import get_hashed
+from classes.dependencies import (
+    get_caching_service,
+    get_current_user,
+    get_message_broker,
+    get_users,
+)
+from classes.functions import to_dict
+from classes.interfaces import IBroker, ICacheService, IRepository
+from classes.services import SettingsService
 from classes.settings import sett
-
+from classes.validation import UserCreate, UserResponse
+from database.postgres.entities import PostgresUser
+from fastapi import APIRouter, Body, Depends, HTTPException, status
+from sqlalchemy.exc import NoInspectionAvailable
 
 user_router = APIRouter(prefix="/user", tags=["user"])
 
@@ -71,7 +74,7 @@ async def password_recovery(
     db: IRepository = Depends(get_users),
     broker: IBroker = Depends(get_message_broker),
 ):
-    broker.create_connection(sett.RECOVERY_QUEUE)
+    broker.create_connection(sett.BROKER_HOST, sett.RECOVERY_QUEUE)
     broker.publish(str({"to": to, "subject": subject, "msg": msg}))
     broker.close()
 
@@ -85,7 +88,9 @@ async def whoiam(
 
 @user_router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_account(
-    user=Depends(get_current_user), db: IRepository = Depends(get_users), cache: ICacheService = Depends(get_caching_service)
+    user=Depends(get_current_user),
+    db: IRepository = Depends(get_users),
+    cache: ICacheService = Depends(get_caching_service),
 ):
     db.remove(user)
     cache.remove(user.username + "_profile")
