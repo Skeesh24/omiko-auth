@@ -12,7 +12,6 @@ class RabbitMQBroker(IBroker):
     def __init__(self, host: str) -> None:
         self.host = host
 
-
     def create_connection(self, queue_name: str) -> None:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
         channel = connection.channel()
@@ -27,6 +26,21 @@ class RabbitMQBroker(IBroker):
 
     def close(self):
         self.connection.close()
+
+
+class RedisBroker(IBroker):
+    def __init__(self, host: str) -> None:
+        self.host = host
+
+    def create_connection(self, url: str, queue_name: str) -> None:
+        self.connection = Redis.from_url(url=url)
+        self.queue_name = queue_name
+
+    def publish(self, message: str) -> None:
+        self.connection.rpush(self.queue_name, message)
+
+    def close(self) -> None:
+        return self.connection.close()
 
 
 class MemcachedService(ICacheService):

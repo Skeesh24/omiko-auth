@@ -4,7 +4,7 @@ from os import environ
 
 @dataclass
 class sett:
-    REDIS_EXTERNAL: str = environ.get("REDIS_EXTERNAL")
+    REDIS_HOST: str = environ.get("REDIS_HOST")
     BROKER_HOST: str = environ.get("BROKER_HOST")
     RECOVERY_QUEUE = environ.get("RECOVERY_QUEUE")
     DEBUG: str = environ.get("DEBUG")
