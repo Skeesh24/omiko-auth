@@ -1,10 +1,10 @@
 from ast import literal_eval
 from os import environ
 
-from classes.settings import sett
 from classes.interfaces import ICacheService
 from classes.services import RabbitMQBroker, RedisService, SettingsService
-from classes.validation import UserResponse, UserInternal
+from classes.settings import sett
+from classes.validation import UserInternal, UserResponse
 from database.repository import UserFirebase, UserPostgres
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
@@ -19,7 +19,7 @@ async def get_message_broker():
 
 
 async def get_caching_service():
-    service = RedisService(sett.REDIS_EXTERNAL)
+    service = RedisService(sett.CACHE_HOST)
 
     try:
         yield service
@@ -41,9 +41,12 @@ async def get_current_user(
 
         if not success:
             user = db.get(limit=1, offset=0, username=username)
-            cache.set(username + "_profile", str({k: v for k, v in user.__dict__.items() if not "_" in k}))
+            cache.set(
+                username + "_profile",
+                str({k: v for k, v in user.__dict__.items() if not "_" in k}),
+            )
         else:
-            user = UserInternal(**literal_eval(user_dict.decode('utf-8')))
+            user = UserInternal(**literal_eval(user_dict.decode("utf-8")))
     else:
         user = db.get(limit=1, offset=0, username=username)
 
