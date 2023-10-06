@@ -19,7 +19,7 @@ async def get_message_broker():
 
 
 async def get_caching_service():
-    service = RedisService(sett.REDIS_HOST)
+    service = RedisService(sett.CACHE_HOST)
 
     try:
         yield service
