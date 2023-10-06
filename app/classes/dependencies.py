@@ -2,7 +2,7 @@ from ast import literal_eval
 from os import environ
 
 from classes.interfaces import ICacheService
-from classes.services import RedisBroker, RedisService, SettingsService
+from classes.services import RabbitMQBroker, RedisBroker, RedisService, SettingsService
 from classes.settings import sett
 from classes.validation import UserInternal
 from database.repository import UserFirebase, UserPostgres
@@ -15,7 +15,7 @@ async def get_users():
 
 
 async def get_message_broker():
-    return RedisBroker(sett.BROKER_HOST)
+    return RabbitMQBroker(sett.BROKER_HOST)
 
 
 async def get_caching_service():
