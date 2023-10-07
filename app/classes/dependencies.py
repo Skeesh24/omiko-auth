@@ -2,7 +2,7 @@ from ast import literal_eval
 from os import environ
 
 from classes.interfaces import ICacheService
-from classes.services import RabbitMQBroker, RedisService, SettingsService
+from classes.services import RabbitMQBroker, RedisBroker, RedisCache, SettingsService
 from classes.settings import sett
 from classes.validation import UserInternal, UserResponse
 from database.repository import UserFirebase, UserPostgres
@@ -15,11 +15,11 @@ async def get_users():
 
 
 async def get_message_broker():
-    return RabbitMQBroker(sett.BROKER_HOST)
+    return RedisBroker(sett.BROKER_HOST)
 
 
 async def get_caching_service():
-    service = RedisService(sett.CACHE_HOST)
+    service = RedisCache(sett.CACHE_HOST)
 
     try:
         yield service
