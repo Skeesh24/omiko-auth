@@ -9,5 +9,5 @@ class sett:
     USER: str = environ.get("USER")
     PASSWORD: str = environ.get("PASSWORD")
     HOST: str = environ.get("HOST")
-    PORT: int = int(environ.get("PORT"))
+    PORT: str = environ.get("PORT")
     DBNAME: str = environ.get("DBNAME")
