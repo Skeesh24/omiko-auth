@@ -15,7 +15,7 @@ async def get_users():
 
 
 async def get_message_broker():
-    return RabbitMQBroker(sett.BROKER_HOST)
+    return RedisBroker()
 
 
 async def get_caching_service():

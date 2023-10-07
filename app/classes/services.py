@@ -9,11 +9,8 @@ from redis import Redis
 
 
 class RabbitMQBroker(IBroker):
-    def __init__(self, host: str) -> None:
-        self.host = host
-
-    def create_connection(self, queue_name: str) -> None:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
+    def create_connection(self, url: str, queue_name: str) -> None:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=url))
         channel = connection.channel()
         channel.queue_declare(queue=queue_name)
         self.connection = connection
@@ -29,9 +26,6 @@ class RabbitMQBroker(IBroker):
 
 
 class RedisBroker(IBroker):
-    def __init__(self, host: str) -> None:
-        self.host = host
-
     def create_connection(self, url: str, queue_name: str) -> None:
         self.connection = Redis.from_url(url=url)
         self.queue_name = queue_name
