@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["proxy"],
+    allow_origins=["https://omiko-proxy.onrender.com"],
     allow_credentials=True,
     allow_headers=["*"],
     allow_methods=["*"],
