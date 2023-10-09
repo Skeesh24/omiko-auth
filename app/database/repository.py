@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Union
 
 from classes.interfaces import IRepository
 from classes.validation import FilterModel, UserCreate, UserResponse
@@ -124,7 +124,7 @@ class UserPostgres(IRepository):
 
     def get(
         self, limit: int = 5, offset: int = 0, **kwargs
-    ) -> Union[list[PostgresUser], PostgresUser]:
+    ) -> Union[List[PostgresUser], PostgresUser]:
         query = self.get_users()
 
         if len(kwargs) > 0:
