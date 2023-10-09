@@ -1,4 +1,5 @@
 from os import environ
+from typing import List
 
 from classes.crypto import get_hashed
 from classes.dependencies import (
@@ -19,11 +20,11 @@ from sqlalchemy.exc import NoInspectionAvailable
 user_router = APIRouter(prefix="/user", tags=["user"])
 
 
-@user_router.get("", response_model=list[UserResponse])
+@user_router.get("", response_model=List[UserResponse])
 async def get_all_users(
     limit: int = 5, offset: int = 0, db: IRepository = Depends(get_users)
 ):
-    users: list[PostgresUser] = db.get(
+    users: List[PostgresUser] = db.get(
         limit=limit,
         offset=offset,
     )
