@@ -3,7 +3,7 @@ from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(
-    f"{sett.PROVIDER}+{sett.DRIVER}://{sett.USER}:{sett.PASSWORD}@{sett.HOST}:{sett.PORT}/{sett.DBNAME}"
+    f"{sett.PROVIDER}+{sett.DRIVER}://{sett.POSTGRES_USER}:{sett.POSTGRES_PASSWORD}@{sett.POSTGRES_HOST}:{sett.POSTGRES_PORT}/{sett.POSTGRES_DBNAME}"
 )
 
 metadata = MetaData()

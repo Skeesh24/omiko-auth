@@ -6,8 +6,8 @@ from os import environ
 class sett:
     PROVIDER: str = environ.get("PROVIDER")
     DRIVER: str = environ.get("DRIVER")
-    USER: str = environ.get("USER")
-    PASSWORD: str = environ.get("PASSWORD")
-    HOST: str = environ.get("HOST")
-    PORT: str = environ.get("PORT")
-    DBNAME: str = environ.get("DBNAME")
+    POSTGRES_USER: str = environ.get("POSTGRES_USER")
+    POSTGRES_PASSWORD: str = environ.get("POSTGRES_PASSWORD")
+    POSTGRES_HOST: str = environ.get("POSTGRES_HOST")
+    POSTGRES_PORT: str = environ.get("POSTGRES_PORT")
+    POSTGRES_DBNAME: str = environ.get("POSTGRES_DBNAME")
