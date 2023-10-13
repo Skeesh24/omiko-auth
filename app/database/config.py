@@ -14,4 +14,4 @@ class sett:
     ID_SERVER_DEFAULT: str = environ.get("ID_SERVER_DEFAULT")
     NOT_INTERNAL_DB: str = environ.get("NOT_INTERNAL_DB")
     USER_TABLENAME: str = environ.get("USER_TABLENAME")
-    USER_INSERT_TABLE: str = environ.get("USER_INSERT_TABLE")
+    USER_INSERT_TABLENAME: str = environ.get("USER_INSERT_TABLENAME")
