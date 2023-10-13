@@ -20,6 +20,7 @@ class DatabaseUser(Base):
 
 class DatabaseUserInsert(Base):
     __tablename__ = sett.USER_INSERT_TABLENAME
+    key = Column(int, primary_key=True, autoincrement="ignore_fk")
     id = Column(
         UUID(False),
         nullable=True,
