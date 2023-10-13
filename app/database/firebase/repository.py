@@ -1,17 +1,17 @@
+from classes.interfaces import IRepository
+from classes.validation import FilterModel, UserCreate, UserResponse
+from database.firebase.entities import FireUser
+from database.firebase.firebase import get_db
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 
-from ...classes.validation import FilterModel, UserCreate, UserResponse
-from .firebase import get_db
-from .entities import User
 
-
-class UserFirebase:
+class UserFirebase(IRepository):
     def __init__(self) -> None:
         self.users = get_db().collection("user")
         self.db = get_db()
 
-    def get(self, limit: int = 5, offset: int = 0, where: FilterModel = None) -> dict:
+    def get(self, limit: int = 5, offset: int = 0, **kwargs) -> dict:
         """
         ## Gets a document by id
 
@@ -24,6 +24,9 @@ class UserFirebase:
         """
         query = self.users
 
+        where = None  # where parameter needs to be constructed automatically
+        raise NotImplementedError()
+
         try:
             if where:
                 query = query.where(**where.d())
@@ -34,7 +37,7 @@ class UserFirebase:
         elements = query.get()
 
         if len(elements) == 0:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            return {}
 
         if limit == 1:
             res: dict = elements[0].to_dict()
@@ -61,12 +64,16 @@ class UserFirebase:
 
         ### returns None or raises exception
         """
-        try:
-            new_elem = User(**element.dict(exclude_defaults=True))
-            new_elem.save()
-            return new_elem.to_dict()
-        except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        # need to cache
+        users = self.get(limit=1, where=FilterModel.fast("username", element.username))
+        if users.get("username"):
+            raise HTTPException(
+                status.HTTP_409_CONFLICT, "this username is already in use"
+            )
+
+        new_elem = FireUser(**element.dict(exclude_defaults=True))
+        new_elem.save()
+        return new_elem.to_dict()
 
     def update(self, user: UserResponse) -> None:
         """
@@ -97,7 +104,4 @@ class UserFirebase:
         ### returns None or raises exception
         """
 
-        try:
-            self.db.recursive_delete(self.users.document(user.id))
-        except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        self.db.recursive_delete(self.users.document(user.id))
