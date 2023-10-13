@@ -43,7 +43,7 @@ class UserMysql(IRepository):
 
     def add(self, user: DatabaseUserInsert) -> DatabaseUser:
         try:
-            self.db.add(user)
+            self.db.query(DatabaseUserInsert).add_entity(user)
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         self.db.commit()
