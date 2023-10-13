@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi_another_jwt_auth import AuthJWT
 from fastapi_another_jwt_auth.exceptions import AuthJWTException
+from settings import sett
 from uvicorn import run
 
 app = FastAPI()
@@ -56,4 +57,10 @@ async def get(name: str, cache: ICacheService = Depends(get_caching_service)):
 
 
 if __name__ == "__main__":
-    run(app, port=10000, host="0.0.0.0")
+    run(
+        app,
+        port=sett.SERVER_PORT,
+        host=sett.SERVER_HOST,
+        ssl_keyfile=sett.SSL_KEYFILE,
+        ssl_certfile=sett.SSL_CERTFILE,
+    )
