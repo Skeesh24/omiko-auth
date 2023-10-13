@@ -19,7 +19,7 @@ class DatabaseUser(Base):
 
 
 class DatabaseUserInsert(Base):
-    __tablename__ = sett.USER_TABLENAME
+    __tablename__ = sett.USER_INSERT_TABLENAME
     id = Column(
         UUID(False),
         nullable=True,
