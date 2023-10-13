@@ -1,11 +1,11 @@
 from ast import literal_eval
 from os import environ
 
-from classes.interfaces import ICacheService
+from classes.interfaces import ICacheService, IRepository
 from classes.services import RabbitMQBroker, RedisBroker, RedisService, SettingsService
 from classes.settings import sett
 from classes.validation import UserInternal
-from database.repository import UserFirebase, UserPostgres
+from database.postgres.repository import UserPostgres
 from fastapi import Depends
 from fastapi_another_jwt_auth import AuthJWT
 
@@ -29,7 +29,7 @@ async def get_caching_service():
 
 async def get_current_user(
     authorization: AuthJWT = Depends(),
-    db: UserFirebase = Depends(get_users),
+    db: IRepository = Depends(get_users),
     cache: ICacheService = Depends(get_caching_service),
 ) -> UserPostgres:
     authorization.jwt_required()
