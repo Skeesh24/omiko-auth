@@ -62,7 +62,7 @@ async def registration(
 ):
     user.password = get_hashed(user.password)
     new_user: DatabaseUserInsert = DatabaseUserInsert(**user.__dict__)
-    db.add(new_user)
+    new_user = db.add(new_user)
     result = to_dict(new_user)
     return result
 
