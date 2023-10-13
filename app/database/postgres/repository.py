@@ -2,11 +2,11 @@ from typing import List, Union
 
 from classes.interfaces import IRepository
 from classes.validation import FilterModel, UserCreate, UserResponse
+from database.config import sett
+from database.database import get_session
+from database.entities import DatabaseUser
 from database.firebase.entities import FireUser
 from database.firebase.firebase import get_db
-from database.postgres.config import sett
-from database.postgres.entities import PostgresUser
-from database.postgres.postgres import get_session
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
 from sqlalchemy import text
@@ -19,18 +19,18 @@ class UserPostgres(IRepository):
     def get_users(self):
         if sett.NOT_INTERNAL_DB:
             self.db.execute(text(f"CALL {sett.ID_SERVER_DEFAULT}"))
-        return self.db.query(PostgresUser)
+        return self.db.query(DatabaseUser)
 
     def get(
         self, limit: int = 5, offset: int = 0, **kwargs
-    ) -> Union[List[PostgresUser], PostgresUser]:
+    ) -> Union[List[DatabaseUser], DatabaseUser]:
         query = self.get_users()
 
         if len(kwargs) > 0:
             try:
                 for k, v in kwargs.items():
                     query = query.filter(
-                        PostgresUser.__getattribute__(PostgresUser, k) == v
+                        DatabaseUser.__getattribute__(DatabaseUser, k) == v
                     )
             except AttributeError:
                 return None
@@ -41,7 +41,7 @@ class UserPostgres(IRepository):
             else query.limit(limit).offset(offset).first()
         )
 
-    def add(self, user: PostgresUser) -> PostgresUser:
+    def add(self, user: DatabaseUser) -> DatabaseUser:
         try:
             self.db.add(user)
         except Exception as e:
@@ -49,9 +49,9 @@ class UserPostgres(IRepository):
         self.db.commit()
         return user
 
-    def update(self, update_user: PostgresUser) -> PostgresUser:
+    def update(self, update_user: DatabaseUser) -> DatabaseUser:
         user_id = self.get(1, 0, username=update_user.username)[0].id
-        user = PostgresUser(id=user_id, **update_user.__dict__)
+        user = DatabaseUser(id=user_id, **update_user.__dict__)
         try:
             self.remove(update_user)
             self.add(user)
@@ -60,9 +60,9 @@ class UserPostgres(IRepository):
         self.db.commit()
         return user
 
-    def remove(self, user: PostgresUser) -> None:
+    def remove(self, user: DatabaseUser) -> None:
         try:
             self.db.delete(user)
         except Exception as e:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         self.db.commit()
