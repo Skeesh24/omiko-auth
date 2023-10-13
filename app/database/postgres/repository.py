@@ -17,7 +17,7 @@ class UserPostgres(IRepository):
         self.db = get_session()
 
     def get_users(self):
-        if sett.ID_SERVER_DEFAULT:
+        if sett.NOT_INTERNAL_DB:
             self.db.execute(text(f"CALL {sett.ID_SERVER_DEFAULT}"))
         return self.db.query(PostgresUser)
 
