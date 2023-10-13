@@ -4,8 +4,8 @@ from classes.interfaces import IRepository
 from classes.validation import FilterModel, UserCreate, UserResponse
 from database.firebase.entities import FireUser
 from database.firebase.firebase import get_db
-from database.postgres.entities import PostgresUser
 from database.postgres.config import sett
+from database.postgres.entities import PostgresUser
 from database.postgres.postgres import get_session
 from fastapi import HTTPException, status
 from google.cloud.firestore_v1.base_document import DocumentSnapshot
@@ -17,8 +17,8 @@ class UserPostgres(IRepository):
         self.db = get_session()
 
     def get_users(self):
-        if sett.CREATE_USER_TABLE:
-            self.db.execute(text(sett.CREATE_USER_TABLE))
+        if sett.ID_SERVER_DEFAULT:
+            self.db.execute(text(f"CALL {sett.ID_SERVER_DEFAULT}"))
         return self.db.query(PostgresUser)
 
     def get(
