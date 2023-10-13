@@ -1,6 +1,6 @@
 from database.config import sett
 from database.database import metadata, session
-from sqlalchemy import UUID, Column, String, Table, text
+from sqlalchemy import UUID, Column, Integer, String, Table, text
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -20,7 +20,7 @@ class DatabaseUser(Base):
 
 class DatabaseUserInsert(Base):
     __tablename__ = sett.USER_INSERT_TABLENAME
-    key = Column(int, primary_key=True, autoincrement="ignore_fk")
+    key = Column(Integer, primary_key=True, autoincrement="ignore_fk")
     id = Column(
         UUID(False),
         nullable=True,
