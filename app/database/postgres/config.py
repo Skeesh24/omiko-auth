@@ -13,3 +13,4 @@ class sett:
     POSTGRES_DBNAME: str = environ.get("POSTGRES_DBNAME")
     ID_SERVER_DEFAULT: str = environ.get("ID_SERVER_DEFAULT")
     NOT_INTERNAL_DB: str = environ.get("NOT_INTERNAL_DB")
+    USER_TABLENAME: str = environ.get("USER_TABLENAME")

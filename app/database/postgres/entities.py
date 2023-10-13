@@ -7,7 +7,7 @@ Base = declarative_base()
 
 
 class PostgresUser(Base):
-    __tablename__ = "user"
+    __tablename__ = sett.USER_TABLENAME
     id = Column(
         UUID(False),
         nullable=False,
