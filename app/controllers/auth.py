@@ -11,7 +11,7 @@ from classes.dependencies import (
 )
 from classes.interfaces import ICacheService, IRepository
 from classes.validation import AccessToken, RefreshToken, TokenResponse, TokenType, UserResponse
-from database.postgres.entities import PostgresUser
+from database.entities import DatabaseUser
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT

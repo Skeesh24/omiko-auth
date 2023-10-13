@@ -13,7 +13,7 @@ from classes.interfaces import IBroker, ICacheService, IRepository
 from classes.services import SettingsService
 from classes.settings import sett
 from classes.validation import UserCreate, UserResponse
-from database.postgres.entities import PostgresUser
+from database.entities import DatabaseUser, DatabaseUserInsert
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.exc import NoInspectionAvailable
 
@@ -24,7 +24,7 @@ user_router = APIRouter(prefix="/user", tags=["user"])
 async def get_all_users(
     limit: int = 5, offset: int = 0, db: IRepository = Depends(get_users)
 ):
-    users: List[PostgresUser] = db.get(
+    users: List[DatabaseUser] = db.get(
         limit=limit,
         offset=offset,
     )
@@ -61,7 +61,7 @@ async def registration(
     db: IRepository = Depends(get_users),
 ):
     user.password = get_hashed(user.password)
-    new_user: PostgresUser = PostgresUser(**user.__dict__)
+    new_user: DatabaseUserInsert = DatabaseUserInsert(**user.__dict__)
     db.add(new_user)
     result = to_dict(new_user)
     return result
