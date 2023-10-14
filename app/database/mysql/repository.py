@@ -47,11 +47,6 @@ class UserMysql(IRepository):
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         self.db.commit()
-        return (
-            self.db.query(DatabaseUser)
-            .filter(DatabaseUser.username == user.username)
-            .first()
-        )
 
     def update(self, update_user: DatabaseUser) -> DatabaseUser:
         user_id = self.get(1, 0, username=update_user.username)[0].id
