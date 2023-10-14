@@ -99,7 +99,7 @@ async def refresh(
         )
 
     received_token = Authorize.get_raw_jwt()
-    if decode(token, settings.authjwt_secret_key, ["HS256"]) != received_token:
+    if decode(token, settings.authjwt_secret_key, [settings.authjwt_algorithm]) != received_token:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="received invalid token"
         )
