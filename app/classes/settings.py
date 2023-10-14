@@ -10,3 +10,7 @@ class sett:
     DEBUG: str = environ.get("DEBUG")
     SENDER_TO: str = environ.get("SENDER_TO")
     SENDER_SUBJECT: str = environ.get("SENDER_SUBJECT")
+
+    CACHE_PROFILE_SUFFIX: str = "_profile"
+    MEMCACHED_CLOSE_EXCEPTION: str = "Error closing memcached session: "
+    REDIS_CLOSE_EXCEPTION: str = "Error closing redis session: "

@@ -38,16 +38,16 @@ async def get_current_user(
     username = authorization.get_jwt_subject()
     user = None
     if not bool(sett.DEBUG):
-        user_dict, success = cache.elem_and_status(username + "_profile")
+        user_dict, success = cache.elem_and_status(username + sett.CACHE_PROFILE_SUFFIX)
 
         if not success:
             user = db.get(limit=1, offset=0, username=username)
             cache.set(
-                username + "_profile",
+                username + sett.CACHE_PROFILE_SUFFIX,
                 str({k: v for k, v in user.__dict__.items() if not "_" in k}),
             )
         else:
-            user = UserInternal(**literal_eval(user_dict.decode("utf-8")))
+            user = UserInternal(**literal_eval(user_dict.decode()))
     else:
         user = db.get(limit=1, offset=0, username=username)
 

@@ -61,7 +61,7 @@ class MemcachedService(ICacheService):
             self.client.disconnect_all()
         except Exception as e:
             # add logging
-            print("Error closing memcached session: " + str(e))
+            print(sett.MEMCACHED_CLOSE_EXCEPTION + str(e))
         finally:
             # ?
             # del self.client
@@ -92,7 +92,7 @@ class RedisService(ICacheService):
             self.client.close()
         except Exception as e:
             # add logging
-            print("Error closing redis session: " + str(e))
+            print(sett.REDIS_CLOSE_EXCEPTION + str(e))
         finally:
             # ?
             # del self.client
