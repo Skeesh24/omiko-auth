@@ -1,6 +1,7 @@
 from typing import Any
 
 from pydantic import BaseModel
+from settings import sett
 
 
 class UserCreate(BaseModel):
@@ -29,7 +30,9 @@ class FilterModel(BaseModel):
 
     @staticmethod
     def fast(path: str, value):
-        return FilterModel(field_path=path, op_string="==", value=value)
+        return FilterModel(
+            field_path=path, op_string=sett.FIREBASE_EQUAL_SIGN, value=value
+        )
 
 
 class TokenType(BaseModel):

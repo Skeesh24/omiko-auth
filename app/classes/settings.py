@@ -26,3 +26,9 @@ class sett:
         if not environ.get("REDIS_CLOSE_EXCEPTION")
         else environ.get("REDIS_CLOSE_EXCEPTION")
     )
+
+    FIREBASE_EQUAL_SIGN: str = (
+        "=="
+        if not environ.get("FIREBASE_EQUAL_SIGN")
+        else environ.get("FIREBASE_EQUAL_SIGN")
+    )
