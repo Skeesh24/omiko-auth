@@ -11,6 +11,18 @@ class sett:
     SENDER_TO: str = environ.get("SENDER_TO")
     SENDER_SUBJECT: str = environ.get("SENDER_SUBJECT")
 
-    CACHE_PROFILE_SUFFIX: str = "_profile"
-    MEMCACHED_CLOSE_EXCEPTION: str = "Error closing memcached session: "
-    REDIS_CLOSE_EXCEPTION: str = "Error closing redis session: "
+    CACHE_PROFILE_SUFFIX: str = (
+        "_profile"
+        if not environ.get("CACHE_PROFILE_SUFFIX")
+        else environ.get("CACHE_PROFILE_SUFFIX")
+    )
+    MEMCACHED_CLOSE_EXCEPTION: str = (
+        "Error closing memcached session: "
+        if not environ.get("MEMCACHED_CLOSE_EXCEPTION")
+        else environ.get("MEMCACHED_CLOSE_EXCEPTION")
+    )
+    REDIS_CLOSE_EXCEPTION: str = (
+        "Error closing redis session: "
+        if not environ.get("REDIS_CLOSE_EXCEPTION")
+        else environ.get("REDIS_CLOSE_EXCEPTION")
+    )
