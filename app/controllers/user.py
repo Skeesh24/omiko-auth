@@ -1,4 +1,3 @@
-from os import environ
 from typing import List
 
 from classes.crypto import get_hashed
@@ -10,14 +9,13 @@ from classes.dependencies import (
 )
 from classes.functions import to_dict
 from classes.interfaces import IBroker, ICacheService, IRepository
-from classes.services import SettingsService
-from classes.settings import sett
-from classes.validation import UserCreate, UserResponse
+from classes.validation import BrokerMessage, UserCreate, UserResponse
 from database.entities import DatabaseUser, DatabaseUserInsert
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from settings import sett
 from sqlalchemy.exc import NoInspectionAvailable
 
-user_router = APIRouter(prefix="/user", tags=["user"])
+user_router = APIRouter(prefix="/" + sett.USER_PREFIX, tags=[sett.USER_PREFIX])
 
 
 @user_router.get("", response_model=List[UserResponse])
@@ -67,7 +65,7 @@ async def registration(
     return result
 
 
-@user_router.post("/recovery", status_code=status.HTTP_201_CREATED)
+@user_router.post("/" + sett.RECOVERY_ROUTE, status_code=status.HTTP_201_CREATED)
 async def password_recovery(
     msg: str,
     to: str = sett.SENDER_TO,
@@ -76,11 +74,11 @@ async def password_recovery(
     broker: IBroker = Depends(get_message_broker),
 ):
     broker.create_connection(sett.BROKER_HOST, sett.RECOVERY_QUEUE)
-    broker.publish(str({"to": to, "subject": subject, "msg": msg}))
+    broker.publish(BrokerMessage.default(to, subject, msg))
     broker.close()
 
 
-@user_router.post("/whoiam", response_model=UserResponse)
+@user_router.post("/" + sett.WHOIAM_ROUTE, response_model=UserResponse)
 async def whoiam(
     me: IRepository = Depends(get_current_user),
 ):
@@ -94,5 +92,5 @@ async def delete_account(
     cache: ICacheService = Depends(get_caching_service),
 ):
     db.remove(user)
-    cache.remove(user.username + "_profile")
-    cache.remove(user.username + "_token")
+    cache.remove(user.username + sett.CACHE_PROFILE_SUFFIX)
+    cache.remove(user.username + sett.CACHE_TOKEN_SUFFIX)
