@@ -49,3 +49,13 @@ class AccessToken(BaseModel):
 
 class RefreshToken(BaseModel):
     refreshToken: str
+
+
+class BrokerMessage:
+    to: str
+    subject: str
+    msg: str
+
+    @classmethod
+    def default(cls, to: str, subject: str, msg: str):
+        return dict(cls(to, subject, msg))
