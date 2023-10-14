@@ -52,7 +52,6 @@ async def get_user_by_email(email: str, db: IRepository = Depends(get_users)):
 @user_router.post(
     "",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserResponse,
 )
 async def registration(
     user: UserCreate,
@@ -60,7 +59,7 @@ async def registration(
 ):
     user.password = get_hashed(user.password)
     new_user: DatabaseUserInsert = DatabaseUserInsert(**user.__dict__)
-    new_user = db.add(new_user)
+    db.add(new_user)
     result = to_dict(new_user)
     return result
 
