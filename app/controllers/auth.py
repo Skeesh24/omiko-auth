@@ -1,33 +1,23 @@
 from datetime import timedelta
-from classes.settings import sett
-from os import environ
 
 from classes.crypto import verify
-from classes.dependencies import (
-    get_caching_service,
-    get_current_user,
-    get_settings,
-    get_users,
-)
+from classes.dependencies import get_caching_service, get_settings, get_users
 from classes.interfaces import ICacheService, IRepository
-from classes.validation import AccessToken, RefreshToken, TokenResponse, TokenType, UserResponse
-from database.entities import DatabaseUser
+from classes.validation import RefreshToken, TokenResponse, TokenType, UserResponse
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_another_jwt_auth import AuthJWT
 from jwt import decode
+from settings import sett
 
 auth_router = APIRouter(
-    prefix="/auth",
-    tags=["auth"],
+    prefix="/" + sett.AUTH_PREFIX,
+    tags=[sett.AUTH_PREFIX],
     dependencies=[Depends(get_caching_service), Depends(get_settings)],
 )
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-
-@auth_router.post("/login", response_model=TokenResponse)
+@auth_router.post("/" + sett.LOGIN_ROUTE, response_model=TokenResponse)
 async def login(
     credentials: OAuth2PasswordRequestForm = Depends(),
     Authorize: AuthJWT = Depends(),
@@ -55,19 +45,19 @@ async def login(
     )
 
     if not bool(sett.DEBUG):
-        cache.set(credentials.username + "_token", refresh_token)
+        cache.set(credentials.username + sett.CACHE_TOKEN_SUFFIX, refresh_token)
 
     return TokenResponse(
         tokens=TokenType(
             accessToken=access_token,
             refreshToken=refresh_token,
-            tokenType="Bearer",
+            tokenType=settings.authjwt_token_type,
         ),
         user=UserResponse(**user.__dict__),
     )
 
 
-@auth_router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@auth_router.post("/" + sett.LOGOUT_ROUTE, status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
     Auhthorize: AuthJWT = Depends(), cache: ICacheService = Depends(get_caching_service)
 ):
@@ -75,13 +65,13 @@ async def logout(
 
     # delete token from the database
     username = Auhthorize.get_jwt_subject()
-    if not cache.remove(username + "_token"):
+    if not cache.remove(username + sett.CACHE_TOKEN_SUFFIX):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="error deleting token"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=sett.DELETE_ERROR_DETAIL
         )
 
 
-@auth_router.post("/refresh", response_model=RefreshToken)
+@auth_router.post("/" + sett.REFRESH_ROUTE, response_model=RefreshToken)
 async def refresh(
     Authorize: AuthJWT = Depends(),
     cache: ICacheService = Depends(get_caching_service),
@@ -91,18 +81,21 @@ async def refresh(
 
     # compare with the token in the database
     username = Authorize.get_jwt_subject()
-    token, success = cache.elem_and_status(username + "_token")
+    token, success = cache.elem_and_status(username + sett.CACHE_TOKEN_SUFFIX)
 
     if not success:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="token not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=sett.TOKEN_NOT_FOUND_DETAIL
         )
 
     received_token = Authorize.get_raw_jwt()
-    if decode(token, settings.authjwt_secret_key, [settings.authjwt_algorithm]) != received_token:
+    if (
+        decode(token, settings.authjwt_secret_key, [settings.authjwt_algorithm])
+        != received_token
+    ):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="received invalid token"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=sett.INVALID_TOKEN_DETAIL
         )
     refresh_token = Authorize.create_refresh_token(username)
-    cache.set(username + "_token", refresh_token)
+    cache.set(username + sett.CACHE_TOKEN_SUFFIX, refresh_token)
     return RefreshToken(refreshToken=refresh_token)
