@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from os import environ
 
+env = lambda key: environ.get(key, "")
+
 
 @dataclass
 class sett:
@@ -12,51 +14,33 @@ class sett:
 
     INVALID_TOKEN_DETAIL: str = (
         "received invalid token"
-        if not environ.get("INVALID_TOKEN_DETAIL")
-        else environ.get("INVALID_TOKEN_DETAIL")
+        if not env("INVALID_TOKEN_DETAIL")
+        else env("INVALID_TOKEN_DETAIL")
     )
     TOKEN_NOT_FOUND_DETAIL: str = (
         "token not found"
-        if not environ.get("TOKEN_NOT_FOUND_DETAIL")
-        else environ.get("TOKEN_NOT_FOUND_DETAIL")
+        if not env("TOKEN_NOT_FOUND_DETAIL")
+        else env("TOKEN_NOT_FOUND_DETAIL")
     )
     DELETE_ERROR_DETAIL: str = (
         "error deleting token"
-        if not environ.get("DELETE_ERROR_DETAIL")
-        else environ.get("DELETE_ERROR_DETAIL")
+        if not env("DELETE_ERROR_DETAIL")
+        else env("DELETE_ERROR_DETAIL")
     )
 
-    AUTH_PREFIX: str = (
-        "auth" if not environ.get("AUTH_PREFIX") else environ.get("AUTH_PREFIX")
-    )
-    USER_PREFIX: str = (
-        "user" if not environ.get("USER_PREFIX") else environ.get("USER_PREFIX")
-    )
+    AUTH_PREFIX: str = "auth" if not env("AUTH_PREFIX") else env("AUTH_PREFIX")
+    USER_PREFIX: str = "user" if not env("USER_PREFIX") else env("USER_PREFIX")
     CACHE_TOKEN_SUFFIX: str = (
-        "_token"
-        if not environ.get("CACHE_TOKEN_SUFFIX")
-        else environ.get("CACHE_TOKEN_SUFFIX")
+        "_token" if not env("CACHE_TOKEN_SUFFIX") else env("CACHE_TOKEN_SUFFIX")
     )
     CACHE_PROFILE_SUFFIX: str = (
-        "_profile"
-        if not environ.get("CACHE_PROFILE_SUFFIX")
-        else environ.get("CACHE_PROFILE_SUFFIX")
+        "_profile" if not env("CACHE_PROFILE_SUFFIX") else env("CACHE_PROFILE_SUFFIX")
     )
 
-    LOGIN_ROUTE: str = (
-        "login" if not environ.get("LOGIN_ROUTE") else environ.get("LOGIN_ROUTE")
-    )
-    LOGOUT_ROUTE: str = (
-        "logout" if not environ.get("LOGOUT_ROUTE") else environ.get("LOGOUT_ROUTE")
-    )
-    REFRESH_ROUTE: str = (
-        "refresh" if not environ.get("REFRESH_ROUTE") else environ.get("REFRESH_ROUTE")
-    )
+    LOGIN_ROUTE: str = "login" if not env("LOGIN_ROUTE") else env("LOGIN_ROUTE")
+    LOGOUT_ROUTE: str = "logout" if not env("LOGOUT_ROUTE") else env("LOGOUT_ROUTE")
+    REFRESH_ROUTE: str = "refresh" if not env("REFRESH_ROUTE") else env("REFRESH_ROUTE")
     RECOVERY_ROUTE: str = (
-        "recovery"
-        if not environ.get("RECOVERY_ROUTE")
-        else environ.get("RECOVERY_ROUTE")
+        "recovery" if not env("RECOVERY_ROUTE") else env("RECOVERY_ROUTE")
     )
-    WHOIAM_ROUTE: str = (
-        "whoiam" if not environ.get("WHOIAM_ROUTE") else environ.get("WHOIAM_ROUTE")
-    )
+    WHOIAM_ROUTE: str = "whoiam" if not env("WHOIAM_ROUTE") else env("WHOIAM_ROUTE")

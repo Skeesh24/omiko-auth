@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from os import environ
 
+env = lambda key: environ.get(key, "")
+
 
 @dataclass
 class sett:
@@ -12,23 +14,19 @@ class sett:
     SENDER_SUBJECT: str = environ.get("SENDER_SUBJECT")
 
     CACHE_PROFILE_SUFFIX: str = (
-        "_profile"
-        if not environ.get("CACHE_PROFILE_SUFFIX")
-        else environ.get("CACHE_PROFILE_SUFFIX")
+        "_profile" if not env("CACHE_PROFILE_SUFFIX") else env("CACHE_PROFILE_SUFFIX")
     )
     MEMCACHED_CLOSE_EXCEPTION: str = (
         "Error closing memcached session: "
-        if not environ.get("MEMCACHED_CLOSE_EXCEPTION")
-        else environ.get("MEMCACHED_CLOSE_EXCEPTION")
+        if not env("MEMCACHED_CLOSE_EXCEPTION")
+        else env("MEMCACHED_CLOSE_EXCEPTION")
     )
     REDIS_CLOSE_EXCEPTION: str = (
         "Error closing redis session: "
-        if not environ.get("REDIS_CLOSE_EXCEPTION")
-        else environ.get("REDIS_CLOSE_EXCEPTION")
+        if not env("REDIS_CLOSE_EXCEPTION")
+        else env("REDIS_CLOSE_EXCEPTION")
     )
 
     FIREBASE_EQUAL_SIGN: str = (
-        "=="
-        if not environ.get("FIREBASE_EQUAL_SIGN")
-        else environ.get("FIREBASE_EQUAL_SIGN")
+        "==" if not env("FIREBASE_EQUAL_SIGN") else env("FIREBASE_EQUAL_SIGN")
     )
