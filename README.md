@@ -1,11 +1,27 @@
 # Omiko Store Web Application - Authorization
-
+## Overview
 This is the auth service for the Omiko Store web application. 
 It is built using FastAPI, SQLAlchemy frameworks and the JWT as a security conception; 
 
+## Setup
+### Requirements
+1. python3.11
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/skeesh24/omiko-data.git
+```
+
+### Install dependencies:
+
+```bash
+python3.11 -m venv venv && venv/Script/activate && pip install -r requirements.txt
+```
 
 ## Features
-
 - OAuth 2.0: Processes your application and provides you with a pair of tokens upon registration: an access token and a refresh token.
 - REST: The application's API provides a simple HTTP route that implements the REST specification.
 - Storage: Data is stored in the postgresql database, and Google's FireStore cloud storage was used in the debugging process.
@@ -15,9 +31,7 @@ It is built using FastAPI, SQLAlchemy frameworks and the JWT as a security conce
 - Proxy Gateway: There is an implementation of the API Gateway pattern that provides a persistent route for the user to access the various microservices.
 - Interface Segragation: Throughout the application you can easily replace modules, for example redis cache with Memcached, due to the use of dedicated interfaces and low cohesion of system components.
 
-
 ## Technologies Used
-
 - Python:3.11.5-bookworm
 - FastAPI
 - SQLAlchemy
@@ -27,8 +41,13 @@ It is built using FastAPI, SQLAlchemy frameworks and the JWT as a security conce
 - Redis
 - Memcached
 - Docker
-  
-## Application Deployment
 
+## Running the Software
+1. Navigate to the root directory. Execute the software:
+```bash
+venv/Script/python src/main.py
+```
+
+## Application Deployment
 The project was deployed as a Render.com blueprint:
 https://
