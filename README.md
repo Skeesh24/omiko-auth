@@ -12,7 +12,7 @@ It is built using FastAPI, SQLAlchemy frameworks and the JWT as a security conce
 Clone the repository:
 
 ```bash
-git clone https://github.com/skeesh24/omiko-data.git
+git clone https://github.com/skeesh24/omiko-auth.git
 ```
 
 ### Install dependencies:
